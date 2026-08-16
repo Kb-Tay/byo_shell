@@ -12,6 +12,11 @@ import (
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
 var _ = fmt.Print
 
+var commandMap = map[string]string{
+	"echo": "echo is a shell builtin",
+	"exit": "exit is a shell builtin",
+}
+
 func main() {
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt)
 
@@ -33,6 +38,14 @@ func main() {
 			cmd := args[0]
 
 			switch cmd {
+			case "type":
+				info, ok := commandMap[cmd]
+				if !ok {
+					fmt.Print(strings.Join(args[1:], "") + ": command not found")	
+					break	
+				}
+
+				fmt.Println(info)
 			case "exit":
 				return
 			case "echo":
@@ -44,3 +57,4 @@ func main() {
 		}
 	}
 }
+
