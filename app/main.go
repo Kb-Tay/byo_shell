@@ -21,13 +21,21 @@ func main() {
 
 		default:
 			fmt.Print("$ ")
-			command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+			input, err := bufio.NewReader(os.Stdin).ReadString('\n')
 			if err != nil {
 				fmt.Printf("Failed to read file: %s", err.Error())
 				os.Exit(1)	
 			}
 
-			fmt.Println(command[:len(command)-1] + ": command not found") // remove the trailing newline
+			cmd := input[:len(input)-1]
+
+			switch cmd {
+			case "exit":
+				return
+			default:
+				fmt.Println(cmd + ": command not found") // remove the trailing newline
+			}
+
 		}
 	}
 }
