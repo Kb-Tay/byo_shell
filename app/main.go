@@ -45,7 +45,7 @@ func main() {
 
 				info, ok := commandMap[args[1]]
 				if !ok {
-					fmt.Println(strings.Join(args[1:], "") + ": command not found")	
+					fmt.Println(strings.Join(args[1:], "") + ": not found")	
 					break	
 				}
 
