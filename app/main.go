@@ -45,6 +45,9 @@ func main() {
 
 				info, ok := commandMap[args[1]]
 				if !ok {
+					if resolvePath(args[1]) {
+						break
+					}
 					fmt.Println(strings.Join(args[1:], "") + ": not found")	
 					break	
 				}
@@ -61,4 +64,56 @@ func main() {
 		}
 	}
 }
+
+// resolve the PATH
+func resolvePath(targetFile string) bool {
+	path, _ := os.LookupEnv("PATH")
+	dirs := strings.SplitSeq(path, ":")
+	fmt.Print(targetFile)
+
+	for dir := range dirs {
+		fmt.Println(dir)
+		filePath, isFound := traverseDirs(dir, targetFile)
+		fmt.Println(isFound)
+	
+		if isFound {
+			fmt.Println(targetFile + " is " + filePath)
+			return true
+		}
+	}
+	// traversal of folders
+	// check if folder or file, if file then compare the filename. If not recursely call read on the folder 
+	return false
+}
+
+func traverseDirs(dir string, target string) (string, bool) {
+	entries, err := os.ReadDir(dir)
+
+	if err != nil {
+		return "", false	
+	}
+	
+	for _, entry := range entries {
+		if entry.IsDir() {
+			filePath, isFound := traverseDirs(dir + entry.Name(), target)
+
+			if isFound {
+				return filePath, true
+			}
+		}
+	
+		// check for file execution permission
+		if entry.Name() == target && isFileExec(entry){
+			return dir + "/" + entry.Name(), true 
+		}
+	}
+
+	return "", false 
+}
+
+func isFileExec(dirEntry os.DirEntry) bool {
+	fi, _ := dirEntry.Info()
+	return fi.Mode().IsRegular() && fi.Mode().Perm()&0111 != 0
+}
+
 
