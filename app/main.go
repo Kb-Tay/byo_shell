@@ -69,12 +69,9 @@ func main() {
 func resolvePath(targetFile string) bool {
 	path, _ := os.LookupEnv("PATH")
 	dirs := strings.SplitSeq(path, ":")
-	fmt.Print(targetFile)
 
 	for dir := range dirs {
-		fmt.Println(dir)
 		filePath, isFound := traverseDirs(dir, targetFile)
-		fmt.Println(isFound)
 	
 		if isFound {
 			fmt.Println(targetFile + " is " + filePath)
