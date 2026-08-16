@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 )
 
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
@@ -26,12 +27,16 @@ func main() {
 				fmt.Printf("Failed to read file: %s", err.Error())
 				os.Exit(1)	
 			}
+	
 
-			cmd := input[:len(input)-1]
+			args := strings.Split(input[:len(input)-1], " ")
+			cmd := args[0]
 
 			switch cmd {
 			case "exit":
 				return
+			case "echo":
+				fmt.Println(strings.Join(args[1:], " "))
 			default:
 				fmt.Println(cmd + ": command not found") // remove the trailing newline
 			}
