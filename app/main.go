@@ -33,15 +33,18 @@ func main() {
 				os.Exit(1)	
 			}
 	
-
 			args := strings.Split(input[:len(input)-1], " ")
 			cmd := args[0]
 
 			switch cmd {
 			case "type":
-				info, ok := commandMap[cmd]
+				if len(args) < 1 {
+					continue	
+				}
+
+				info, ok := commandMap[args[1]]
 				if !ok {
-					fmt.Print(strings.Join(args[1:], "") + ": command not found")	
+					fmt.Println(strings.Join(args[1:], "") + ": command not found")	
 					break	
 				}
 
