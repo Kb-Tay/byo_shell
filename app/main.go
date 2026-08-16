@@ -110,7 +110,7 @@ func traverseDirs(dir string, target string) (string, bool) {
 
 func isFileExec(dirEntry os.DirEntry) bool {
 	fi, _ := dirEntry.Info()
-	return fi.Mode().IsRegular() && fi.Mode().Perm()&0111 != 0
+	return fi.Mode().Perm()&0111 != 0
 }
 
 
