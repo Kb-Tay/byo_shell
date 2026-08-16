@@ -15,6 +15,7 @@ var _ = fmt.Print
 var commandMap = map[string]string{
 	"echo": "echo is a shell builtin",
 	"exit": "exit is a shell builtin",
+	"type": "type is a shell builtin",
 }
 
 func main() {
