@@ -68,12 +68,12 @@ func main() {
 						return 
 					}
 					command.Start()
-					command.Wait()
 
 					bytes, err := io.ReadAll(stdout)
 					if err != nil {
 						return	
 					}
+					command.Wait()
 					fmt.Println(string(bytes))	
 					return
 				}
