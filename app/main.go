@@ -55,7 +55,7 @@ func main() {
 				isInPath, path := locateExecInPath(args[1]) 	
 
 				if isInPath {
-					fmt.Println(cmd + " is " + path)
+					fmt.Println(args[1] + " is " + path)
 					continue
 				}
 
