@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
 	"strings"
 )
@@ -58,11 +59,23 @@ func main() {
 			case "echo":
 				fmt.Println(strings.Join(args[1:], " "))
 			default:
+				if !isCommandBuiltIn(cmd) && resolvePath(cmd) {
+					params := strings.Join(args[1:], " ")
+					command := exec.Command(cmd, params)
+					command.Run()
+				}
+
 				fmt.Println(cmd + ": command not found") // remove the trailing newline
+				return
 			}
 
 		}
 	}
+}
+
+func isCommandBuiltIn(cmd string) bool {
+	_, ok := commandMap[cmd]
+	return ok
 }
 
 // resolve the PATH
