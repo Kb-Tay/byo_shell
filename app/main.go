@@ -61,7 +61,7 @@ func main() {
 				fmt.Println(strings.Join(args[1:], " "))
 			default:
 				if !isCommandBuiltIn(cmd) && resolvePath(cmd, false) {
-					params := strings.Join(args[1:], " ")
+					params := strings.Join(args, " ")
 					command := exec.Command(cmd, params)
 					stdout, err := command.StdoutPipe()
 					if err != nil {
