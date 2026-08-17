@@ -76,7 +76,7 @@ func main() {
 //					}
 //					command.Wait()
 					fmt.Println(out.String())	
-					return
+					continue
 				}
 
 				fmt.Println(cmd + ": command not found") // remove the trailing newline
