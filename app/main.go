@@ -75,7 +75,7 @@ func main() {
 //						return	
 //					}
 //					command.Wait()
-					fmt.Println(out.String())	
+					fmt.Print(out.String())	
 					continue
 				}
 
