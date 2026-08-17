@@ -62,20 +62,22 @@ func main() {
 			default:
 				if !isCommandBuiltIn(cmd) && resolvePath(cmd, false) {
 					params := strings.Join(args[1:], " ")
-					fmt.Printf("%v\n", params)
 					command := exec.Command(cmd, params)
-					stdout, err := command.StdoutPipe()
-					if err != nil {
-						return 
-					}
-					command.Start()
-
-					bytes, err := io.ReadAll(stdout)
-					if err != nil {
-						return	
-					}
-					command.Wait()
-					fmt.Println(string(bytes))	
+					var out strings.Builder
+					command.Stdout = &out
+					command.Run()
+//					stdout, err := command.StdoutPipe()
+//					if err != nil {
+//						return 
+//					}
+//					command.Start()
+//
+//					bytes, err := io.ReadAll(stdout)
+//					if err != nil {
+//						return	
+//					}
+//					command.Wait()
+					fmt.Println(out.String())	
 					return
 				}
 
