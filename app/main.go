@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -46,7 +47,7 @@ func main() {
 
 				info, ok := commandMap[args[1]]
 				if !ok {
-					if resolvePath(args[1]) {
+					if resolvePath(args[1], true) {
 						break
 					}
 					fmt.Println(strings.Join(args[1:], "") + ": not found")	
@@ -59,10 +60,21 @@ func main() {
 			case "echo":
 				fmt.Println(strings.Join(args[1:], " "))
 			default:
-				if !isCommandBuiltIn(cmd) && resolvePath(cmd) {
+				if !isCommandBuiltIn(cmd) && resolvePath(cmd, false) {
 					params := strings.Join(args[1:], " ")
 					command := exec.Command(cmd, params)
-					command.Run()
+					stdout, err := command.StdoutPipe()
+					if err != nil {
+						return 
+					}
+
+					bytes, err := io.ReadAll(stdout)
+					
+					if err != nil {
+						return	
+					}
+					fmt.Println(string(bytes))	
+
 					return
 				}
 
@@ -80,14 +92,14 @@ func isCommandBuiltIn(cmd string) bool {
 }
 
 // resolve the PATH
-func resolvePath(targetFile string) bool {
+func resolvePath(targetFile string, isPrint bool) bool {
 	path, _ := os.LookupEnv("PATH")
 	dirs := strings.SplitSeq(path, ":")
 
 	for dir := range dirs {
 		filePath, isFound := traverseDirs(dir, targetFile)
 	
-		if isFound {
+		if isFound && isPrint {
 			fmt.Println(targetFile + " is " + filePath)
 			return true
 		}
