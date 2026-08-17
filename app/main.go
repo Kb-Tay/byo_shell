@@ -74,7 +74,6 @@ func main() {
 						return	
 					}
 					fmt.Println(string(bytes))	
-
 					return
 				}
 
@@ -99,8 +98,10 @@ func resolvePath(targetFile string, isPrint bool) bool {
 	for dir := range dirs {
 		filePath, isFound := traverseDirs(dir, targetFile)
 	
-		if isFound && isPrint {
-			fmt.Println(targetFile + " is " + filePath)
+		if isFound {
+			if isPrint {
+				fmt.Println(targetFile + " is " + filePath)
+			}
 			return true
 		}
 	}
