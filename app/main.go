@@ -4,9 +4,11 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"strings"
 )
 
@@ -34,7 +36,7 @@ func main() {
 				fmt.Printf("Failed to read file: %s", err.Error())
 				os.Exit(1)	
 			}
-	
+		
 			args := strings.Split(input[:len(input)-1], " ")
 			cmd := args[0]
 
@@ -45,37 +47,28 @@ func main() {
 				}
 
 				info, ok := commandMap[args[1]]
-				if !ok {
-					if resolvePath(args[1], true) {
-						break
-					}
-					fmt.Println(strings.Join(args[1:], "") + ": not found")	
-					break	
+				if ok {
+					fmt.Println(info)
+					continue
 				}
 
-				fmt.Println(info)
+				isInPath, path := locateExecInPath(args[1]) 	
+
+				if isInPath {
+					fmt.Println(cmd + " is " + path)
+					continue
+				}
+
+				fmt.Println(strings.Join(args[1:], "") + ": not found")	
 			case "exit":
 				return
 			case "echo":
 				fmt.Println(strings.Join(args[1:], " "))
 			default:
-				if !isCommandBuiltIn(cmd) && resolvePath(cmd, false) {
-					command := exec.Command(cmd, args[1:]...)
-					var out strings.Builder
-					command.Stdout = &out
-					command.Run()
-//					stdout, err := command.StdoutPipe()
-//					if err != nil {
-//						return 
-//					}
-//					command.Start()
-//
-//					bytes, err := io.ReadAll(stdout)
-//					if err != nil {
-//						return	
-//					}
-//					command.Wait()
-					fmt.Print(out.String())	
+				isInPath, _ := locateExecInPath(cmd)
+
+				if isInPath {
+					execCommand(cmd, args[1:])
 					continue
 				}
 
@@ -86,59 +79,72 @@ func main() {
 	}
 }
 
-func isCommandBuiltIn(cmd string) bool {
-	_, ok := commandMap[cmd]
-	return ok
+func execCommand(cmd string, args []string) {
+	command := exec.Command(cmd, args...)
+	var out strings.Builder
+	command.Stdout = &out
+	err := command.Run()
+	
+	if err != nil {
+		log.Fatal("Command failed to execute")
+	}
+
+	fmt.Print(out.String())	
 }
 
 // resolve the PATH
-func resolvePath(targetFile string, isPrint bool) bool {
+func locateExecInPath(targetFile string) (bool, string) {
 	path, _ := os.LookupEnv("PATH")
 	dirs := strings.SplitSeq(path, ":")
 
 	for dir := range dirs {
-		filePath, isFound := traverseDirs(dir, targetFile)
-	
-		if isFound {
-			if isPrint {
-				fmt.Println(targetFile + " is " + filePath)
-			}
-			return true
+		if dir == "" {
+			dir = "."
 		}
-	}
-	// traversal of folders
-	// check if folder or file, if file then compare the filename. If not recursely call read on the folder 
-	return false
-}
 
-func traverseDirs(dir string, target string) (string, bool) {
-	entries, err := os.ReadDir(dir)
+		filePath := filepath.Join(dir, targetFile);
+		info, err := os.Stat(filePath)
 
-	if err != nil {
-		return "", false	
-	}
-	
-	for _, entry := range entries {
-		if entry.IsDir() {
-			filePath, isFound := traverseDirs(dir + entry.Name(), target)
-
-			if isFound {
-				return filePath, true
-			}
+		if err != nil {
+			continue
 		}
-	
-		// check for file execution permission
-		if entry.Name() == target && isFileExec(entry){
-			return dir + "/" + entry.Name(), true 
+
+		if info.Mode().Perm()&0111 != 0 {
+			return true, filePath
 		}
 	}
 
-	return "", false 
+	return false, ""
 }
 
-func isFileExec(dirEntry os.DirEntry) bool {
-	fi, _ := dirEntry.Info()
-	return fi.Mode().Perm()&0111 != 0
-}
+//func traverseDirs(dir string, target string) (string, bool) {
+//	entries, err := os.ReadDir(dir)
+//
+//	if err != nil {
+//		return "", false	
+//	}
+//	
+//	for _, entry := range entries {
+//		if entry.IsDir() {
+//			filePath, isFound := traverseDirs(dir + entry.Name(), target)
+//
+//			if isFound {
+//				return filePath, true
+//			}
+//		}
+//	
+//		// check for file execution permission
+//		if entry.Name() == target && isFileExec(entry){
+//			return dir + "/" + entry.Name(), true 
+//		}
+//	}
+//
+//	return "", false 
+//}
+//
+//func isFileExec(dirEntry os.DirEntry) bool {
+//	fi, _ := dirEntry.Info()
+//	return fi.Mode().Perm()&0111 != 0
+//}
 
 
