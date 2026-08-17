@@ -63,6 +63,7 @@ func main() {
 					params := strings.Join(args[1:], " ")
 					command := exec.Command(cmd, params)
 					command.Run()
+					return
 				}
 
 				fmt.Println(cmd + ": command not found") // remove the trailing newline
