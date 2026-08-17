@@ -64,12 +64,12 @@ func main() {
 					params := strings.Join(args[1:], " ")
 					command := exec.Command(cmd, params)
 					stdout, err := command.StdoutPipe()
+					fmt.Println("hello")
 					if err != nil {
 						return 
 					}
 
 					bytes, err := io.ReadAll(stdout)
-					
 					if err != nil {
 						return	
 					}
