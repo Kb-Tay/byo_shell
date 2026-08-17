@@ -80,7 +80,6 @@ func main() {
 				}
 
 				fmt.Println(cmd + ": command not found") // remove the trailing newline
-				return
 			}
 
 		}
