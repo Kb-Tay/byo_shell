@@ -62,6 +62,14 @@ func main() {
 				fmt.Println(strings.Join(args[1:], "") + ": not found")	
 			case "exit":
 				return
+
+			case "pwd":
+				pwd, err := os.Getwd()
+				if err != nil {
+					log.Fatal("Failed to get working dir")
+				}
+
+				fmt.Println(pwd)
 			case "echo":
 				fmt.Println(strings.Join(args[1:], " "))
 			default:
@@ -116,35 +124,4 @@ func locateExecInPath(targetFile string) (bool, string) {
 
 	return false, ""
 }
-
-//func traverseDirs(dir string, target string) (string, bool) {
-//	entries, err := os.ReadDir(dir)
-//
-//	if err != nil {
-//		return "", false	
-//	}
-//	
-//	for _, entry := range entries {
-//		if entry.IsDir() {
-//			filePath, isFound := traverseDirs(dir + entry.Name(), target)
-//
-//			if isFound {
-//				return filePath, true
-//			}
-//		}
-//	
-//		// check for file execution permission
-//		if entry.Name() == target && isFileExec(entry){
-//			return dir + "/" + entry.Name(), true 
-//		}
-//	}
-//
-//	return "", false 
-//}
-//
-//func isFileExec(dirEntry os.DirEntry) bool {
-//	fi, _ := dirEntry.Info()
-//	return fi.Mode().Perm()&0111 != 0
-//}
-
 
