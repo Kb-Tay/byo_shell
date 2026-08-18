@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"os/exec"
@@ -63,6 +65,21 @@ func main() {
 				fmt.Println(strings.Join(args[1:], "") + ": not found")
 			case "exit":
 				return
+		
+			case "cd":
+				if len(args) < 1 {
+					continue
+				}
+
+				err := os.Chdir(args[1])
+				if errors.Is(err, fs.ErrNotExist) {
+					fmt.Println("cd: " + args[1] + ": No such file or directory")	
+					continue
+				}
+
+				if err != nil {
+					log.Fatal("Failed to change dir")
+				}
 
 			case "pwd":
 				pwd, err := os.Getwd()
