@@ -16,9 +16,10 @@ import (
 var _ = fmt.Print
 
 var commandMap = map[string]string{
-	"echo": "echo is a shell builtin",
-	"exit": "exit is a shell builtin",
-	"type": "type is a shell builtin",
+	"echo":  "echo is a shell builtin",
+	"exit":  "exit is a shell builtin",
+	"type":  "type is a shell builtin",
+	"shell": "shell is a shell builtin",
 }
 
 func main() {
@@ -26,24 +27,24 @@ func main() {
 
 	for {
 		select {
-		case <- ctx.Done():
-			return	
+		case <-ctx.Done():
+			return
 
 		default:
 			fmt.Print("$ ")
 			input, err := bufio.NewReader(os.Stdin).ReadString('\n')
 			if err != nil {
 				fmt.Printf("Failed to read file: %s", err.Error())
-				os.Exit(1)	
+				os.Exit(1)
 			}
-		
+
 			args := strings.Split(input[:len(input)-1], " ")
 			cmd := args[0]
 
 			switch cmd {
 			case "type":
 				if len(args) < 1 {
-					continue	
+					continue
 				}
 
 				info, ok := commandMap[args[1]]
@@ -52,14 +53,14 @@ func main() {
 					continue
 				}
 
-				isInPath, path := locateExecInPath(args[1]) 	
+				isInPath, path := locateExecInPath(args[1])
 
 				if isInPath {
 					fmt.Println(args[1] + " is " + path)
 					continue
 				}
 
-				fmt.Println(strings.Join(args[1:], "") + ": not found")	
+				fmt.Println(strings.Join(args[1:], "") + ": not found")
 			case "exit":
 				return
 
@@ -92,12 +93,12 @@ func execCommand(cmd string, args []string) {
 	var out strings.Builder
 	command.Stdout = &out
 	err := command.Run()
-	
+
 	if err != nil {
 		log.Fatal("Command failed to execute")
 	}
 
-	fmt.Print(out.String())	
+	fmt.Print(out.String())
 }
 
 // resolve the PATH
@@ -110,7 +111,7 @@ func locateExecInPath(targetFile string) (bool, string) {
 			dir = "."
 		}
 
-		filePath := filepath.Join(dir, targetFile);
+		filePath := filepath.Join(dir, targetFile)
 		info, err := os.Stat(filePath)
 
 		if err != nil {
@@ -124,4 +125,3 @@ func locateExecInPath(targetFile string) (bool, string) {
 
 	return false, ""
 }
-
