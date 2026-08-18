@@ -19,7 +19,7 @@ var commandMap = map[string]string{
 	"echo":  "echo is a shell builtin",
 	"exit":  "exit is a shell builtin",
 	"type":  "type is a shell builtin",
-	"shell": "shell is a shell builtin",
+	"pwd": "pwd is a shell builtin",
 }
 
 func main() {
