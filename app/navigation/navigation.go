@@ -13,7 +13,6 @@ func Exec(args string) {
 	traversePath, initPath := getInitPath(args)
 	path := traverse(initPath, traversePath)
 	changeDir(path)
-	fmt.Println(getWd())
 }
 
 
