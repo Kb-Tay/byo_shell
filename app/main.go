@@ -3,15 +3,15 @@ package main
 import (
 	"bufio"
 	"context"
-	"errors"
 	"fmt"
-	"io/fs"
 	"log"
 	"os"
 	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"strings"
+
+	"github.com/codecrafters-io/shell-starter-go/app/navigation"
 )
 
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
@@ -70,16 +70,8 @@ func main() {
 				if len(args) < 1 {
 					continue
 				}
-
-				err := os.Chdir(args[1])
-				if errors.Is(err, fs.ErrNotExist) {
-					fmt.Println("cd: " + args[1] + ": No such file or directory")	
-					continue
-				}
-
-				if err != nil {
-					log.Fatal("Failed to change dir")
-				}
+				
+				navigation.Exec(args[1])
 
 			case "pwd":
 				pwd, err := os.Getwd()
