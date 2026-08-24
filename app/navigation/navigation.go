@@ -23,12 +23,7 @@ func getInitPath(path string) (string, string) {
 		return path, getWd()	
 	}
 	
-	if path[0] == '/' {
-		s := strings.SplitAfterN((path)[1:], "/", 1)
-		return s[1], s[0]
-	}
-	
-	return "", ""	
+	return "", path
 }
 
 func traverse(currPath string, targetPath string) string {
