@@ -10,8 +10,7 @@ import (
 )
 
 func Exec(args string) {
-	traversePath, initPath := getInitPath(args)
-	path := traverse(initPath, traversePath)
+	path := traverse("", args)
 	changeDir(path)
 }
 
