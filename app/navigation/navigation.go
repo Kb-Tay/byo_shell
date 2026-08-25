@@ -1,4 +1,4 @@
-package navigation 
+package navigation
 
 import (
 	"errors"
@@ -10,19 +10,43 @@ import (
 )
 
 func Exec(args string) {
-	path := traverse("", args)
+	path := traversePath(args)	
 	changeDir(path)
 }
 
-
-// Checks if path starts from abs or relative path 
-func getInitPath(path string) (string, string) {
-	if path[0] == '.' {
-		return path, getWd()	
-	}
+func traversePath(path string) string {
+	var res []string
+	pathArr := strings.Split(path, "/")
 	
-	return "", path
+	for i, arg := range(pathArr) {
+		if i == 0 {
+			// handle abs path	
+			if len(arg) == 0 {
+				continue
+			}
+
+			wd := getWd()
+			wdArr := strings.Split(wd[1:], "/")
+			res = append(res, wdArr...)	
+			
+			// if ../, then we need to continue
+			if arg == "." {
+				continue
+			}
+		}
+
+		if arg == ".." {
+			// probably need error handle
+			res = res[:len(res)-1]
+			continue
+		}
+
+		res = append(res, arg)
+	}
+
+	return "/" + strings.Join(res, "/")
 }
+
 
 func traverse(currPath string, targetPath string) string {
 	if len(targetPath) == 0 {
