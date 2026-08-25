@@ -120,9 +120,7 @@ func changeDir(dir string) {
 	err := os.Chdir(dir)
 	if errors.Is(err, fs.ErrNotExist) {
 		fmt.Println("cd: " + dir + ": No such file or directory")	
-	}
-
-	if err != nil {
+	} else if err != nil {
 		log.Fatal("Failed to change dir")
 	}
 }
