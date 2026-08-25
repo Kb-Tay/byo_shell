@@ -25,6 +25,13 @@ func traversePath(path string) string {
 				continue
 			}
 
+			if arg == "~" {
+				homeDir := os.Getenv("HOME")
+				s := strings.Split(homeDir, "/")
+				res = append(res, s...)
+				continue
+			}
+
 			wd := getWd()
 			wdArr := strings.Split(wd[1:], "/")
 			res = append(res, wdArr...)	
