@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/codecrafters-io/shell-starter-go/app/navigation"
+	"github.com/codecrafters-io/shell-starter-go/app/redirect"
 )
 
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
@@ -80,6 +81,12 @@ func main() {
 
 				fmt.Println(pwd)
 			case "echo":
+				if redirect.IsRedirect(args[1:]) {
+					text, out := args[1], args[3]
+					os.WriteFile(out, []byte(text + "\n"), 0644)
+					continue	
+				}
+
 				fmt.Println(strings.Join(args[1:], " "))
 			default:
 				isInPath, _ := locateExecInPath(cmd)
@@ -97,13 +104,23 @@ func main() {
 }
 
 func execCommand(cmd string, args []string) {
-	command := exec.Command(cmd, args...)
+	if len(args) == 0 {
+		return
+	}
+
+	command := exec.Command(cmd, args[0])
 	var out strings.Builder
 	command.Stdout = &out
 	err := command.Run()
 
 	if err != nil {
 		log.Fatal("Command failed to execute")
+	}
+
+	if redirect.IsRedirect(args) {
+		outFp := args[2]
+		os.WriteFile(outFp, []byte(out.String()), 0644)
+		return
 	}
 
 	fmt.Print(out.String())
