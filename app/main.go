@@ -3,9 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
-	"errors"
 	"fmt"
-	"io/fs"
 	"log"
 	"os"
 	"os/exec"
