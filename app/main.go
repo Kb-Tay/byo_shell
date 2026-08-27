@@ -134,9 +134,12 @@ func execCommand(cmd string, args []string) {
 	}
 
 	if isRedirect {
-		os.WriteFile(pathToWrite, []byte(out.String()), 0644)
+		err := os.WriteFile(pathToWrite, []byte(out.String()), 0644)
+		if err != nil {
+			fmt.Println("Failed to write")
+		}
 	} else {
-		fmt.Print(out.String())
+		fmt.Println(out.String())
 	}
 }
 
