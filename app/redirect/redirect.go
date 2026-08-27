@@ -8,7 +8,7 @@ func IsRedirect(args []string) (bool, string, int) {
 	}
 
 	for i, arg := range(args) {
-		if arg == ">" && i < len(args) - 1 {
+		if (arg == ">" || arg == "1>") && i < len(args) - 1 {
 			return true, args[i + 1], i	
 		}
 	}

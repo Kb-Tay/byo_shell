@@ -88,7 +88,7 @@ func main() {
 				
 				if redirect, out, _ := redirect.IsRedirect(args[1:]); redirect {
 					os.WriteFile(out, []byte(args[1]), 0644)
-					return
+					continue	
 				}
 
 				fmt.Println(strings.Join(args[1:], " "))
@@ -140,7 +140,7 @@ func execCommand(cmd string, args []string) {
 	if isRedirect {
 		os.WriteFile(pathToWrite, []byte(out.String()), 0644)
 	} else {
-		fmt.Print(out.String())
+		fmt.Println(out.String())
 	}
 }
 
