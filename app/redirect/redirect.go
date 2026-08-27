@@ -1,9 +1,17 @@
 package redirect
 
-func IsRedirect(args []string) bool {	
-	if len(args) == 3 && args[1] == ">" {
-		return true	
+
+// returns if redirect and the redirect path
+func IsRedirect(args []string) (bool, string, int) {	
+	if len(args) < 2 {
+		return false, "", 0
+	}
+
+	for i, arg := range(args) {
+		if arg == ">" && i < len(args) - 1 {
+			return true, args[i + 1], i	
+		}
 	}
 	
-	return false
+	return false, "", 0
 }

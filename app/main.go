@@ -81,10 +81,14 @@ func main() {
 
 				fmt.Println(pwd)
 			case "echo":
-				if redirect.IsRedirect(args[1:]) {
-					text, out := args[1], args[3]
-					os.WriteFile(out, []byte(text + "\n"), 0644)
-					continue	
+				if len(args) == 1 {
+					fmt.Println("")
+					continue
+				}
+				
+				if redirect, out, _ := redirect.IsRedirect(args[1:]); redirect {
+					os.WriteFile(out, []byte(args[1]), 0644)
+					return
 				}
 
 				fmt.Println(strings.Join(args[1:], " "))
@@ -104,27 +108,43 @@ func main() {
 }
 
 func execCommand(cmd string, args []string) {
+	var command *exec.Cmd 	
+
 	if len(args) == 0 {
-		return
+		command = exec.Command(cmd)
 	}
 
-	command := exec.Command(cmd, args[0])
+	isRedirect, pathToWrite, i := redirect.IsRedirect(args)
+
+	// for eg: ls > hello.txt
+	if isRedirect && i == 0 {
+		command = exec.Command(cmd)
+	}
+
+	if isRedirect && i > 0 {
+		command = exec.Command(cmd, args[:i]...)
+	}
+
+	if !isRedirect {
+		command = exec.Command(cmd, args...)	
+	}
+
 	var out strings.Builder
 	command.Stdout = &out
 	err := command.Run()
 
 	if err != nil {
-		log.Fatal("Command failed to execute")
+		fmt.Println(err.Error())
 	}
 
-	if redirect.IsRedirect(args) {
-		outFp := args[2]
-		os.WriteFile(outFp, []byte(out.String()), 0644)
-		return
+	if isRedirect {
+		os.WriteFile(pathToWrite, []byte(out.String()), 0644)
+	} else {
+		fmt.Print(out.String())
 	}
-
-	fmt.Print(out.String())
 }
+
+
 
 // resolve the PATH
 func locateExecInPath(targetFile string) (bool, string) {
