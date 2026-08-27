@@ -139,7 +139,7 @@ func execCommand(cmd string, args []string) {
 			fmt.Println("Failed to write")
 		}
 	} else {
-		fmt.Println(out.String())
+		fmt.Print(out.String())
 	}
 }
 
