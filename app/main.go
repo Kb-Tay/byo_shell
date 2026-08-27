@@ -156,7 +156,7 @@ func execCat(args []string, redirectPath string) {
 	var out strings.Builder
 	var errOut strings.Builder
 
-	for i, arg := range(args) {
+	for _, arg := range(args) {
 		command := exec.Command("cat", arg)
 		err := command.Run()
 		if err != nil {
