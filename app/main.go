@@ -87,7 +87,7 @@ func main() {
 				}
 				
 				if redirect, out, i := redirect.IsRedirect(args[1:]); redirect {
-					os.WriteFile(out, []byte(strings.Join(args[1:i], " ") + "\n"), 0644)
+					os.WriteFile(out, []byte(strings.Join(args[1:i + 1], " ") + "\n"), 0644)
 					continue	
 				}
 
