@@ -138,7 +138,7 @@ func execCommand(cmd string, args []string) {
 	err := command.Run()
 
 	if err != nil {
-		fmt.Println(errOut.String())
+		fmt.Print(errOut.String())
 	}
 
 	if isRedirect {
