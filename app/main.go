@@ -125,7 +125,7 @@ func execCommand(cmd string, args []string) {
 		command = exec.Command(cmd, args[:i]...)
 	}
 
-	if !isRedirect {
+	if len(args) > 0 && !isRedirect {
 		command = exec.Command(cmd, args...)	
 	}
 
