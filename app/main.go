@@ -119,13 +119,9 @@ func execCommand(cmd string, args []string) {
 	// for eg: ls > hello.txt
 	if isRedirect && i == 0 {
 		command = exec.Command(cmd)
-	}
-
-	if isRedirect && i > 0 {
+	} else if isRedirect && i > 0 {
 		command = exec.Command(cmd, args[:i]...)
-	}
-
-	if len(args) > 0 && !isRedirect {
+	} else if len(args) > 0 && !isRedirect {
 		command = exec.Command(cmd, args...)	
 	}
 
@@ -140,7 +136,7 @@ func execCommand(cmd string, args []string) {
 	if isRedirect {
 		os.WriteFile(pathToWrite, []byte(out.String()), 0644)
 	} else {
-		fmt.Println(out.String())
+		fmt.Print(out.String())
 	}
 }
 

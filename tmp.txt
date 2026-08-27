@@ -1,0 +1,5 @@
+total 16
+-rw-r--r--@ 1 aaron  staff     5 27 Aug 22:49 file.txt
+-rw-r--r--@ 1 aaron  staff  3094 27 Aug 22:53 main.go
+drwxr-xr-x@ 3 aaron  staff    96 25 Aug 23:04 navigation
+drwxr-xr-x@ 3 aaron  staff    96 27 Aug 22:53 redirect
