@@ -120,13 +120,7 @@ func execCommand(cmd string, args []string) {
 	if isRedirect && i == 0 {
 		command = exec.Command(cmd)
 	} else if isRedirect && i > 0 {
-		
-		if cmd == "cat" {
-			command = exec.Command(cmd, args[i-1])	
-
-		} else {
-			command = exec.Command(cmd, args[:i]...)
-		}
+		command = exec.Command(cmd, args[:i]...)
 	} else if len(args) > 0 && !isRedirect {
 		command = exec.Command(cmd, args...)	
 	}
