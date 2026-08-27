@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"os/exec"
@@ -123,6 +125,7 @@ func execCommand(cmd string, args []string) {
 		
 		if cmd == "cat" {
 			command = exec.Command(cmd, args[i-1])	
+
 		} else {
 			command = exec.Command(cmd, args[:i]...)
 		}
@@ -131,11 +134,13 @@ func execCommand(cmd string, args []string) {
 	}
 
 	var out strings.Builder
+	var errOut strings.Builder
 	command.Stdout = &out
+	command.Stderr = &errOut
 	err := command.Run()
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(errOut.String())
 	}
 
 	if isRedirect {
