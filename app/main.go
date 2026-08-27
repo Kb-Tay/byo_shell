@@ -120,7 +120,13 @@ func execCommand(cmd string, args []string) {
 	if isRedirect && i == 0 {
 		command = exec.Command(cmd)
 	} else if isRedirect && i > 0 {
-		command = exec.Command(cmd, args[:i]...)
+	
+		if cmd == "cat" {
+			execCat(args[:i], pathToWrite)
+		} else {
+			command = exec.Command(cmd, args[:i]...)
+		}
+
 	} else if len(args) > 0 && !isRedirect {
 		command = exec.Command(cmd, args...)	
 	}
@@ -136,13 +142,31 @@ func execCommand(cmd string, args []string) {
 		return
 	}
 
-	if isRedirect {
+	if isRedirect && cmd != "cat" {
 		err := os.WriteFile(pathToWrite, []byte(out.String()), 0644)
 		if err != nil {
 			fmt.Println("Failed to write")
 		}
 	} else {
 		fmt.Print(out.String())
+	}
+}
+
+func execCat(args []string, redirectPath string) {
+	var out strings.Builder
+	var errOut strings.Builder
+
+	for i, arg := range(args) {
+		command := exec.Command("cat", arg)
+		err := command.Run()
+		if err != nil {
+			fmt.Print(errOut.String())
+		}
+		
+		err = os.WriteFile(redirectPath, []byte(out.String()), 0644)
+		if err != nil {
+			fmt.Println("Failed to write file")
+		}
 	}
 }
 
